@@ -11,7 +11,6 @@ from nltk.corpus import reuters
 
 # Format of dictionary {term: (offset, no_bytes, len_list), ...}
 # Format of postings [(term, skipID), ...]
-UNIVERSAL_SET_KEY = -100
 
 def usage():
     print("usage: " + sys.argv[0] + " -i directory-of-documents -d temp_postings-file -p postings-file")
@@ -52,17 +51,6 @@ def build_index(in_dir, out_dict, out_postings):
     # Storing byte offset in dictionary so that postings lists can be retrieved without reading entire file
     current_offset = 0 
     with open(out_postings, "wb") as output:
-        # Insert universal set of (docID, document length) for normalization
-        universal = sorted([int(fileid.split("/")[-1]) for fileid in file_ids])
-        for i in range(len(universal)):
-            universal[i] = (universal[i], len(reuters.words(f"training/{universal[i]}")))
-        universal_binary = pickle.dumps(universal)
-        
-        no_of_bytes = len(universal_binary)
-        dictionary[UNIVERSAL_SET_KEY] = (current_offset, no_of_bytes, len(universal))
-        output.write(universal_binary)
-        current_offset += len(universal_binary)
-
         for key in sorted_keys:
             to_add = sorted(temp_postings[key])
             to_add_binary = pickle.dumps(to_add)
@@ -73,6 +61,16 @@ def build_index(in_dir, out_dict, out_postings):
 
     dictionary_binary = pickle.dumps(dictionary)
     with open(out_dict, "wb") as output:
+        output.write(dictionary_binary)
+
+    # Storing dictionary of document lengths for normalization
+    with open("doc_length_dictionary.txt", "wb") as output:
+        dictionary = {}
+        universal = sorted([int(fileid.split("/")[-1]) for fileid in file_ids])
+        for i in range(len(universal)):
+            dictionary[universal[i]] = (len(reuters.words(f"training/{universal[i]}")))
+        dictionary_binary = pickle.dumps(dictionary)
+        no_of_bytes = len(dictionary_binary)
         output.write(dictionary_binary)
     print ("indexing over")
 
@@ -110,7 +108,7 @@ if (__name__ == "__main__"):
         input.seek(current_offset)
         posting = pickle.loads(input.read(no_of_bytes))
         print(posting)
-    '''
+    '''  
   
 
 
