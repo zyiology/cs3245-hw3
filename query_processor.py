@@ -3,7 +3,8 @@ import heapq
 from collections import defaultdict
 from math import log
 from index import DOCUMENT_LENGTH_KEY, TOTAL_DOCUMENTS_KEY
-from nltk import PorterStemmer
+from nltk import PorterStemmer, word_tokenize
+from string import punctuation
 
 class QueryProcessor:
 
@@ -24,8 +25,12 @@ class QueryProcessor:
     def process_query(self, query, number_results=10):
         scores = defaultdict(float)
 
-        # remove duplicate terms and stem the query
-        query_terms = set(query.split())
+        # tokenize and remove punctuation
+        query_terms = word_tokenize(query)
+        query_terms = [term for term in query_terms if term not in punctuation]
+
+        # remove duplicate terms and stem the terms
+        query_terms = set(query_terms)
         query_terms = [self.stemmer.stem(term.lower()) for term in query_terms]
 
         # remove invalid terms
