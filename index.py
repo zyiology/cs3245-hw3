@@ -10,6 +10,7 @@ import collections
 import math
 
 from nltk.corpus import reuters
+from nltk.tokenize import word_tokenize
 from collections import Counter
 from collections import defaultdict
 
@@ -45,7 +46,7 @@ def build_index(in_dir, out_dict, out_postings):
     file.close()
 
     for fileid in file_ids: 
-        words = reuters.words(fileid)
+        words = word_tokenize(reuters.raw(fileid))
         words = [stemmer.stem(word).lower() for word in words if word not in string.punctuation] 
         word_count = Counter(words)
         id = int(fileid.split("/")[-1])
@@ -120,8 +121,8 @@ if (__name__ == "__main__"):
         input.seek(current_offset)
         posting = pickle.loads(input.read(no_of_bytes))
         print(posting)
-    print(f"Total documents: {dictionary[TOTAL_DOCUMENTS_KEY]}")
 '''
+
   
 
 
