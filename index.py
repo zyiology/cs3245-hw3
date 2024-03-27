@@ -14,9 +14,10 @@ from nltk.tokenize import word_tokenize
 from collections import Counter
 from collections import defaultdict
 
-# Format of dictionary {term: (offset, no_bytes, len_list), ...}
-# Format of postings [(term, skipID), ...]
+# Format of term dictionary {term: (offset, no_bytes), ...}
+# Format of postings [(docID, log term frequency), ...]
 
+# Unique keys for document length dictionary and total number of documents
 DOCUMENT_LENGTH_KEY = -100
 TOTAL_DOCUMENTS_KEY = -200
 
@@ -53,7 +54,7 @@ def build_index(in_dir, out_dict, out_postings):
         # Create tuples of (docID, log term freqeuncy) and appending to temp_postings
         for word in word_count:
             temp_postings[word].append((id, 1 + math.log10(word_count[word])))
-        # Document length calculation 
+        # Document vector length calculation 
         sum = 0
         for word in word_count:
             sum += (1 + math.log10(word_count[word]))**2
@@ -113,15 +114,7 @@ if (__name__ == "__main__"):
 
     build_index(input_directory, output_file_dictionary, output_file_postings)
     
-'''
-    with open("dictionary.txt","rb") as input:
-        dictionary = pickle.loads(input.read())
-    current_offset, no_of_bytes = dictionary["bahia"]
-    with open("postings.txt", "rb") as input:
-        input.seek(current_offset)
-        posting = pickle.loads(input.read(no_of_bytes))
-        print(posting)
-'''
+
 
   
 
