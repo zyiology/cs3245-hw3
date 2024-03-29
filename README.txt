@@ -16,6 +16,13 @@ A line creating the out_postings file was added before the main body of code, so
 
 build_index() in index.py hashes terms and postings lists of [(docID, log term frequency), ...] into the temporary postings dictionary in memory, and then written to disk as postings.txt once all files in the input directory have been processed. 2 files are outputted: dictionary.txt, with a dictionary of (term, (byte offset of posting list in postings.txt, number of bytes of postings list)), and postings.txt, as previously mentioned, both serialised with Pickle. The byte offset approach ensures that postings lists can be read in search.py without reading the entire postings.txt. A dictionary of document vector lengths for all documents, as well as a variable for the total number of documents, are also added into dictionary.txt with unique keys to allow for calculations in the search process.
 
+For search:
+QueryProcessor class is defined in query_processor.py, handles an individual query using the process_query() method. Query is processed as follows: word_tokenize() -> remove punctuation -> remove duplicate terms -> lower() -> stem()
+invalid terms (i.e. not defined in dictionary in indexing) are removed. postings list for each term are retrieved, used to calculate scores following algorithm in lecture notes
+top 10 highest scores are retrieved in sorted order, then documents with equal scores are sorted by document number
+
+search.py handles the processing of the query and output file
+
 == Files included with this submission ==
 
 List the files in your submission here and provide a short 1 line
