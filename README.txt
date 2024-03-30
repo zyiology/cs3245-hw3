@@ -3,7 +3,7 @@ Email(s): e0538377@u.nus.edu, e1332814@u.nus.edu
 
 == Python Version ==
 
-I'm (We're) using Python Version 3.11.2 for this assignment.
+We're using Python Version 3.11.2 for this assignment.
 
 == General Notes about this assignment ==
 
@@ -11,17 +11,16 @@ Give an overview of your program, describe the important algorithms/steps
 in your program, and discuss your experiments in general.  A few paragraphs 
 are usually sufficient.
 
-The Reuters corpus was accessed via API with reuters.raw(), with the text then stemmed and case-folded with punctuation removed. Search terms are the file names in the specified in_dir appended to "training" since it was specified that we would be using the training set only e.g. "training/1".
-A line creating the out_postings file was added before the main body of code, so that this file can be read during the indexing process. As out_dict is only ever opened in "wb" mode, which automatically creates a file if it does not exist, it is not necessary to create the out_dict file here. 
+The Reuters corpus was accessed via API with reuters.raw() and tokenized with word_tokenize(), with punctuation then removed and the remaining text stemmed and case-folded. Search terms for reuters.raw() are the file names in the specified in_dir appended to "training" since it was specified that we would be using the training set only e.g. "training/1".
 
-build_index() in index.py hashes terms and postings lists of [(docID, log term frequency), ...] into the temporary postings dictionary in memory, and then written to disk as postings.txt once all files in the input directory have been processed. 2 files are outputted: dictionary.txt, with a dictionary of (term, (byte offset of posting list in postings.txt, number of bytes of postings list)), and postings.txt, as previously mentioned, both serialised with Pickle. The byte offset approach ensures that postings lists can be read in search.py without reading the entire postings.txt. A dictionary of document vector lengths for all documents, as well as a variable for the total number of documents, are also added into dictionary.txt with unique keys to allow for calculations in the search process.
+build_index() in index.py hashes terms and postings lists of [(docID, log term frequency), ...] into the temporary postings dictionary in memory, which is then written to disk as postings.txt once all files in the input directory have been processed. 2 files are outputted: dictionary.txt, with a dictionary of (term, (byte offset of posting list in postings.txt, number of bytes of postings list)), and postings.txt, as previously mentioned, both serialised with Pickle. The byte offset approach ensures that postings lists can be read in search.py without reading the entire postings.txt. A dictionary of document vector lengths for all documents, as well as a variable for the total number of documents, are also added into dictionary.txt with unique keys to allow for calculations in the search process.
 
 For search:
 QueryProcessor class is defined in query_processor.py, handles an individual query using the process_query() method. Query is processed as follows: word_tokenize() -> remove punctuation -> remove duplicate terms -> lower() -> stem()
 invalid terms (i.e. not defined in dictionary in indexing) are removed. postings list for each term are retrieved, used to calculate scores following algorithm in lecture notes
-top 10 highest scores are retrieved in sorted order, then documents with equal scores are sorted by document number
+top 10 highest scores are retrieved in sorted order, then documents with equal scores are sorted by document number.
 
-search.py handles the processing of the query and output file
+search.py handles the processing of the query and output file.
 
 == Files included with this submission ==
 
@@ -58,3 +57,5 @@ We suggest that we should be graded as follows:
 
 <Please list any websites and/or people you consulted with for this
 assignment and state their role>
+
+https://www.geeksforgeeks.org/defaultdict-in-python/ - functionality for defaultdict to facilitate indexing logic, since new terms are often indexed
